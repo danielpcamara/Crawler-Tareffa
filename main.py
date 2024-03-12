@@ -110,32 +110,38 @@ class TareffaSite:
         WebDriverWait(self.browser, 90).until(EC.presence_of_element_located((By.XPATH, '//mat-cell')))
                                                                              
         attribute_groups = self.browser.find_elements(By.TAG_NAME, 'mat-cell')
+
         for element_group, changes in zip(attribute_groups, list_of_changes):
-            if changes[0] != 'N/A':
-                #print(element_group.find_element(By.TAG_NAME, 'a').text, changes)
-                element_group.click()
+            change_others = True # by default all items are changed, they wont only if 'M' is inform in the first space of the group
+            if changes[0] == 'N/A':
+                continue
+            #print(element_group.find_element(By.TAG_NAME, 'a').text, changes)
+            if element_group.find_element(By.TAG_NAME, 'a').text == '01. Regime Tributário':
+                subpath = './../label'
+            else:
+                subpath = './..'
+            if changes[0] == 'M':
+                change_others = False
+
+            element_group.click()
+            sleep(0.5)
+
+            all_attributes = '//*[@class="container d-flex flex-wrap"]/*/div/app-checkbox/div/div/input'
+            WebDriverWait(self.browser, 90).until(EC.presence_of_element_located((By.XPATH, all_attributes)))
+
+            elements_att = self.browser.find_elements(By.XPATH, all_attributes)
+            i = 1
+            had_changes = False
+            for element in elements_att:
+
+                need_to_change = (str(i) in changes and not element.is_selected()) or (not(str(i) in changes) and element.is_selected() and change_others)
+
+                if need_to_change:
+                    element.find_element(By.XPATH, subpath).click()   # Check
+                    had_changes = True
+                i += 1
+            if had_changes:
                 sleep(0.5)
-
-                all_attributes = '//*[@class="container d-flex flex-wrap"]/*/div/app-checkbox/div/div/input'
-                WebDriverWait(self.browser, 90).until(EC.presence_of_element_located((By.XPATH, all_attributes)))
-
-                elements_att = self.browser.find_elements(By.XPATH, all_attributes)
-                i = 1
-                had_changes = False
-                for element in elements_att:
-                    if element_group.find_element(By.TAG_NAME, 'a').text == '01. Regime Tributário':
-                        subpath = './../label'
-                    else:
-                        subpath = './..'
-                    
-                    need_to_change = (str(i) in changes and not element.is_selected()) or (not(str(i) in changes) and element.is_selected())
-
-                    if need_to_change:
-                        element.find_element(By.XPATH, subpath).click()   # Check
-                        had_changes = True
-                    i += 1
-                if had_changes:
-                    sleep(0.5)
 
     def get_company_list(file, browser):
         shtcompany = pd.read_excel(file)

@@ -14,7 +14,8 @@ The workbook must have a worksheet with **at least** 2 columns:
     * The groups **must** be sorted with the same site's order
     * Every group must be separated by pipe (```|```)
     * If the group should not be changed, inform "N/A"
-    * Otherwise informe the relative position of evrey attribute that must be enable, seperated by semicolon (```;```).
+    * Otherwise informe the relative position of evrey attribute that must be enable, seperated by semicolon (```;```)
+    * By default all items are changed, they wont be unckeck only if ```M``` (_Manter_, to keep in portuguese) is inform in the first space of the group.
 
 A sample file is available in this repo with one Exemple.
 
