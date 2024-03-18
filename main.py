@@ -96,10 +96,14 @@ class TareffaSite:
         self.xpath_wait_click('//div[@role="tab"]/div[contains(text(), "Características")]')
 
         #Load 50 at a time
+        sleep(1)
         self.xpath_wait_click('//div[contains(text(), "Itens por página")]/../mat-form-field')
         self.xpath_wait_click('//span[contains(text(), " 50 ")]')
 
-    def update_client_attributes(self, id, list_of_changes):
+    def update_client_attributes(self, id, list_of_changes, desloc=-1):
+        
+        id = str(int(id + desloc))
+        print(f"https://web.tareffa.com.br/empresas/{id}")
         self.browser.get(f"https://web.tareffa.com.br/empresas/{id}")
 
         # Select "Características" Menu
@@ -159,16 +163,25 @@ class TareffaSite:
         return list_of_companies
 
 
-def main():
+def main(console_log=False):
 
     browser = webdriver.Chrome()
 
     tareffa_site = TareffaSite(browser)
+    
+    if console_log: print('login')
     tareffa_site.login()
     
+    if console_log: print('get_list_of_changes')
     list_of_changes = get_list_of_changes('Base Atualização.xlsx', 'Alterações')
 
+    if console_log: print('set_size_attibutes_gourp')
+    tareffa_site.set_size_attibutes_gourp()
+
+    if console_log: print('interate over changes')
     for row in list_of_changes.iterrows():  # loop through all rows in the Spredsheet sites
+        
+        if console_log: print(row[1]['idempresa'])
         tareffa_site.update_client_attributes(row[1]['idempresa'], row[1]['Alterações'])
 
     input("Press Enter to end this.")

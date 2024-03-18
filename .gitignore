@@ -1,3 +1,4 @@
 config.json
-Base Atualização.xlsx
+*.xlsx
+!Base Atualização_sample.xlsx
 __pycache__/
